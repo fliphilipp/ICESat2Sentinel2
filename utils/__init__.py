@@ -1,7 +1,3 @@
-import utils.oa
-import utils.curve_intersect
-import utils.nsidc
-import utils.S2
 import os
 
 # make gitignore file if not exists, and add output folders
@@ -41,6 +37,7 @@ if not os.path.exists('ed'):
     print("Earthdata user credentials are not saved yet!")
     print("  --> Open ed/edcreds.py and enter your credentials where prompted.")
     print("  --> Then save the file and re-start your kernel if in Jupyterlab.")
+    exit()
 
 if not os.path.exists('IS2data'):
     os.makedirs('IS2data')
@@ -48,3 +45,8 @@ if not os.path.exists('plots'):
     os.makedirs('plots')
 if not os.path.exists('imagery'):
      os.makedirs('imagery')
+        
+import utils.oa
+import utils.curve_intersect
+import utils.nsidc
+import utils.S2
