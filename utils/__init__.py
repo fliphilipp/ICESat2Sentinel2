@@ -1,4 +1,5 @@
 import os
+import sys
 
 # make gitignore file if not exists, and add output folders
 if not os.path.exists('.gitignore'):
@@ -37,7 +38,7 @@ if not os.path.exists('ed'):
     print("Earthdata user credentials are not saved yet!")
     print("  --> Open ed/edcreds.py and enter your credentials where prompted.")
     print("  --> Then save the file and re-start your kernel if in Jupyterlab.")
-    exit()
+    sys.exit()
 
 if not os.path.exists('IS2data'):
     os.makedirs('IS2data')
