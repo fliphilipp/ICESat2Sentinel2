@@ -1,5 +1,7 @@
 # Plot ICESat-2 ATL03 Photon data alongside Sentinel-2 
 
+Run the notebook [IS2S2_plot_example.ipynb](IS2S2_plot_example.ipynb) to make your plots. 
+
 ![teaser image](https://raw.githubusercontent.com/fliphilipp/images/main/IS2_cycle09_RGT0842_GT2L_2020-11-18T08_20_16Z_strong.jpg)
 
 By Philipp Arndt \
