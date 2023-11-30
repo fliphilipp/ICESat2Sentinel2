@@ -1,0 +1,6 @@
+ed/
+IS2data/
+plots/
+imagery/
+*ipynb_checkpoints
+*__pycache__
