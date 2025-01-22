@@ -1,6 +1,10 @@
 # Plot ICESat-2 ATL03 Photon data alongside Sentinel-2 
 
-Run the notebook [IS2S2_plot_example.ipynb](IS2S2_plot_example.ipynb) to make your plots. 
+Run the notebook [IS2S2_plot_example.ipynb](IS2S2_plot_example.ipynb) to make your plots.
+
+*The examples in the notebook show how to plot and contextualize ICESat-2 signals of submerged "benches" at ice shelf fronts, which cause buoyant upward flexure at the front.*
+
+This code can be executed in the [CryoCloud](https://cryointhecloud.com/) environment.
 
 ![teaser image](https://raw.githubusercontent.com/fliphilipp/images/main/IS2_cycle09_RGT0842_GT2L_2020-11-18T08_20_16Z_strong.jpg)
 
@@ -29,7 +33,7 @@ The function returns:
 - **```figure```: matplotlib output figure** *(if ```return_data``` is set to ```False```)*
 - ```(figure, atl03_dataframe, atl03_ancillary_data, imagery_rasterio_reader)``` *(if ```return_data``` is set to ```True```)*
 
-*The examples in the notebook show how to plot and contextualize ICESat-2 signals of submerged "benches" at ice shelf fronts, which cause buoyant upward flexure at the front.*
+
 
 By Philipp Arndt \
 Scripps Institution of Oceanography, University of California San Diego \
