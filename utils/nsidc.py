@@ -20,7 +20,8 @@ from ed.edcreds import getedcreds
 
 ################################################################################
 def download_is2(short_name='ATL03', start_date='2018-01-01', end_date='2030-01-01', uid='userid', pwd='pwd', rgt='all',
-                 boundbox=None, shape=None, vars_sub='all', output_dir='nsidc_outputs', start_time = '00:00:00', end_time = '23:59:59'):
+                 boundbox=None, shape=None, vars_sub='gtx', output_dir='nsidc_outputs', start_time = '00:00:00', end_time = '23:59:59',
+                 gtx='all'):
     
     bounding_box = '%.7f,%.7f,%.7f,%.7f' % tuple(boundbox)
 
@@ -103,6 +104,11 @@ def download_is2(short_name='ATL03', start_date='2018-01-01', end_date='2030-01-
         # variable subsetting
         variables = [SubsetVariable.attrib for SubsetVariable in root.iter('SubsetVariable')]  
         variables_raw = [variables[i]['value'] for i in range(len(variables))]
+        gtxs_remove = ['gt1l', 'gt1r', 'gt2l', 'gt2r', 'gt3l', 'gt3r']
+        if gtx in gtxs_remove:
+            gtxs_remove.remove(gtx)
+            for gt_rem in gtxs_remove:
+                variables_raw = [x for x in variables_raw if gt_rem not in x]
         variables_join = [''.join(('/',v)) if v.startswith('/') == False else v for v in variables_raw] 
         variable_vals = [v.replace(':', '/') for v in variables_join]
 
@@ -113,7 +119,8 @@ def download_is2(short_name='ATL03', start_date='2018-01-01', end_date='2030-01-
     if vars_sub == 'all':
         var_list_subsetting = ''
     else:
-        var_list_subsetting = intersection(variable_vals,var_list)
+        # var_list_subsetting = intersection(variable_vals,var_list)
+        var_list_subsetting = variable_vals
 
     if len(subagent) < 1 :
         print('No services exist for', short_name, 'version', latest_version)
@@ -169,7 +176,7 @@ def download_is2(short_name='ATL03', start_date='2018-01-01', end_date='2030-01-
         API_request = api_request = f'{base_url}?{param_string}&page_num={page_val}'
         endpoint_list.append(API_request)
 
-    print('\n', *endpoint_list, sep = "\n") 
+    # print('\n', *endpoint_list, sep = "\n") 
 
     # Create an output folder if the folder does not already exist.
     path = str(os.getcwd() + '/' + output_dir)

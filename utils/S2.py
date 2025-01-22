@@ -160,7 +160,7 @@ def plotS2cloudfree(lon, lat, date_time, buffer_m=2500, max_cloud_prob=15, gamma
         if days_buffer > 200:
             days_buffer = 200
         increment_days = days_buffer
-        while (collection_size<10) & (days_buffer <= 200):
+        while (collection_size<1) & (days_buffer <= 200):
 
             collection = get_sentinel2_cloud_collection(lon, lat, date_time, days_buffer=days_buffer)
 
@@ -314,6 +314,9 @@ def plotIS2S2(lon, lat, date, rgt, gtx, buffer_m=2500, max_cloud_prob=15, gamma_
     
     bbox_atl03 = get_bbox(lon, lat, buffer_m)
     uid, pwd, email = getedcreds()
+    # atl03_rename = not re_download
+    atl03_rename = True
+    atl03_add_to_fn = "%s_%s_%s_%sm" % (gtx, '%09.4f'%lon, '%09.4f'%lat, buffer_m)
 
     if not os.path.exists(IS2dir):
         os.makedirs(IS2dir)
@@ -323,6 +326,8 @@ def plotIS2S2(lon, lat, date, rgt, gtx, buffer_m=2500, max_cloud_prob=15, gamma_
     if not re_download:
         # naming convention: ATL03_[yyyymmdd][hhmmss]_[ttttccss]_[vvv_rr].h5
         search_pattern = r'processed_ATL03_%s\d{6}_%04i\d{4}_\d{3}_\d{2}.h5$' % (date.replace('-', ''), rgt)
+        if atl03_rename:
+            search_pattern = search_pattern.replace('.h5$', '_%s.h5$' % atl03_add_to_fn)
         regex = re.compile(search_pattern)
         filename = None
         for root, dirs, files in os.walk(IS2dir):
@@ -335,15 +340,20 @@ def plotIS2S2(lon, lat, date, rgt, gtx, buffer_m=2500, max_cloud_prob=15, gamma_
     # if no matching file was found, or if re-download is set to True, download the data from NSIDC
     if not atl03file:
         granule_list = download_is2(short_name='ATL03', rgt=rgt, start_date=date, end_date=date, 
-                                    boundbox=bbox_atl03, output_dir=IS2dir, uid=uid, pwd=pwd)
+                                    boundbox=bbox_atl03, output_dir=IS2dir, uid=uid, pwd=pwd, gtx=gtx)
 
         atl03file = [IS2dir + '/' + x for x in os.listdir(IS2dir) if granule_list[0] in x][0]
+
+        if atl03_rename:
+            atl03file_new = atl03file.replace('.h5', '_%s.h5' % atl03_add_to_fn)
+            os.rename(atl03file, atl03file_new)
+            atl03file = atl03file_new
         
     if not imagery_filename:
-        imagery_filename = 'imagery/' + atl03file.split('/')[-1].replace('.h5', '') + '_%s' % gtx + '.tif'
+        imagery_filename = 'imagery/' + atl03file.split('/')[-1].replace('.h5', '.tif')
         
     # read in the data from h5 file
-    gtxs, ancillary, photon_data = read_atl03(atl03file, geoid_h=apply_geoid)
+    gtxs, ancillary, photon_data = read_atl03(atl03file, geoid_h=apply_geoid, gtxs_to_read=gtx)
     df = photon_data[gtx]
     date_time = convert_time_to_string(df.dt.median())
 
@@ -419,11 +429,14 @@ def plotIS2S2(lon, lat, date, rgt, gtx, buffer_m=2500, max_cloud_prob=15, gamma_
     fig.tight_layout()
 
     if not plot_filename:
-        plot_filename = 'plots/IS2_cycle%02i_RGT%04i_%s_%s_%s.jpg' % (ancillary['cycle_number'],
+        plot_filename = 'plots/IS2_cycle%02i_RGT%04i_%s_%s_%s_%s_%s_%sm.jpg' % (ancillary['cycle_number'],
                                                             rgt,
                                                             gtx.upper(),
                                                             date_time,
-                                                            ancillary['gtx_strength_dict'][gtx]
+                                                            ancillary['gtx_strength_dict'][gtx],
+                                                            '%09.4f'%lon,
+                                                            '%09.4f'%lat,
+                                                            buffer_m
                                                            )
     fig.savefig(plot_filename, dpi=600)
     print('--> Saved plot as %s.' % plot_filename)
