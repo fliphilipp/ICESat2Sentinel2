@@ -444,7 +444,11 @@ def read_atl03(filename, geoid_h=True, gtxs_to_read='all'):
             segment_length = np.array(f[beam]['geolocation']['segment_length'])
             valid = ph_index_beg>=0 # need to delete values where there's no photons in the segment (-1 value)
             df.loc[ph_index_beg[valid], 'xatc'] = segment_dist_x[valid]
-            df.xatc.fillna(method='ffill',inplace=True)
+            
+            # the code commented out below is now deprecated, use obj.ffill() instead
+            # df.xatc.fillna(method='ffill',inplace=True)
+            df['xatc'] = df.xatc.ffill()
+            
             df.xatc += np.array(f[beam]['heights']['dist_ph_along'])
 
             #### now we can filter out TEP (we don't do IRF / afterpulses because it seems to not be very good...)
